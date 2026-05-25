@@ -10,7 +10,7 @@ export function calculatePositionMultipliers(handSize: number): number[] {
   const result: number[] = [];
 
   for (let i = 0; i < handSize; i++) {
-    const t = handSize === 1 ? 0 : i / (handSize - 1);
+    const t = i / (handSize - 1);
     const multiplier = maxMultiplier + (minMultiplier - maxMultiplier) * t;
     result.push(Math.round(multiplier * 100) / 100);
   }
