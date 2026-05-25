@@ -98,7 +98,8 @@ export class BattleEngine {
     }
 
     const multipliers = calculatePositionMultipliers(handSize);
-    const resolvedCards = this.resolveAutoOrder(this.state.hand);
+    const resolvedCards = this.resolveAutoOrder([...this.state.hand]);
+    const resolvedIds = new Set(resolvedCards.map(c => c.instanceId));
 
     resolvedCards.forEach((rc, idx) => {
       const def = getCardDef(rc.defId);
@@ -121,7 +122,16 @@ export class BattleEngine {
       this.emit(events, { type: 'card_played', cardInstanceId: rc.instanceId, isAuto: true });
     });
 
-    this.state.discardPile.push(...this.state.hand.splice(0));
+    // Only discard the originally resolved cards; keep cards drawn during auto_resolve
+    const played: RuntimeCard[] = [];
+    this.state.hand = this.state.hand.filter(c => {
+      if (resolvedIds.has(c.instanceId)) {
+        played.push(c);
+        return false;
+      }
+      return true;
+    });
+    this.state.discardPile.push(...played);
 
     this.checkVictory(events);
     this.transitionToEnemy(events);
