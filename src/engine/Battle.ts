@@ -47,6 +47,9 @@ export class BattleEngine {
     // Draw cards
     const drawCount = Math.min(HAND_SIZE, this.state.drawPile.length);
     const drawn = this.state.drawPile.splice(-drawCount, drawCount);
+    if (this.state.hand.length > 0) {
+      this.state.discardPile.push(...this.state.hand);
+    }
     this.state.hand = drawn;
     if (drawCount > 0) {
       this.emit(events, { type: 'draw', count: drawCount });
@@ -59,6 +62,7 @@ export class BattleEngine {
   }
 
   playCard(instanceId: string, targetId?: string): PlayResult | null {
+    if (this.state.phase !== 'player_turn') return null;
     const cardIdx = this.state.hand.findIndex(c => c.instanceId === instanceId);
     if (cardIdx === -1) return null;
 
@@ -139,7 +143,7 @@ export class BattleEngine {
 
     if (this.state.phase !== 'defeat') {
       this.state.turnNumber++;
-      this.startTurn();
+      events.push(...this.startTurn());
     }
 
     return events;
@@ -199,13 +203,14 @@ export class BattleEngine {
     const enemy = this.state.enemies.find(e => e.id === enemyId);
     if (!enemy || enemy.currentHp <= 0) return;
 
+    const originalAmount = amount;
     if (enemy.block > 0) {
       const blocked = Math.min(enemy.block, amount);
       enemy.block -= blocked;
       amount -= blocked;
     }
     enemy.currentHp -= amount;
-    this.emit(events, { type: 'damage', targetId: enemyId, amount });
+    this.emit(events, { type: 'damage', targetId: enemyId, amount: originalAmount });
 
     if (enemy.currentHp <= 0) {
       enemy.currentHp = 0;
