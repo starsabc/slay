@@ -137,4 +137,65 @@ describe('BattleEngine', () => {
       expect(engine.getState().phase).toBe('defeat');
     });
   });
+
+  describe('Wound (内伤) system', () => {
+    it('applies wound via effect', () => {
+      const state = makeTestState({
+        hand: [{ instanceId: 'w1', defId: 'wound_seal' }],
+        enemies: [{
+          id: 'e1', name: '毒蛇', maxHp: 12, currentHp: 12, block: 0, wound: 0,
+          intent: { type: 'attack', value: 3 }
+        }],
+      });
+      engine = new BattleEngine(state);
+      engine.playCard('w1', 'e1');
+      expect(engine.getState().enemies[0].wound).toBe(3);
+    });
+
+    it('detonates wound for damage and clears wound', () => {
+      const state = makeTestState({
+        hand: [{ instanceId: 'd1', defId: 'detonate' }],
+        enemies: [{
+          id: 'e1', name: '毒蛇', maxHp: 12, currentHp: 12, block: 0, wound: 5,
+          intent: { type: 'attack', value: 3 }
+        }],
+      });
+      engine = new BattleEngine(state);
+      engine.playCard('d1', 'e1');
+      const s = engine.getState();
+      expect(s.enemies[0].wound).toBe(0);      // cleared
+      expect(s.enemies[0].currentHp).toBe(2);  // 12 - 5*2
+    });
+
+    it('auto-detonate at multiplier 1 for single card', () => {
+      const state = makeTestState({
+        hand: [{ instanceId: 'd1', defId: 'detonate' }],
+        enemies: [{
+          id: 'e1', name: '毒蛇', maxHp: 12, currentHp: 12, block: 0, wound: 5,
+          intent: { type: 'attack', value: 3 }
+        }],
+      });
+      engine = new BattleEngine(state);
+      engine.endTurn();
+      const s = engine.getState();
+      expect(s.enemies[0].wound).toBe(0);
+      expect(s.enemies[0].currentHp).toBe(7); // 12 - 5*1 (single card multiplier 1.0)
+    });
+
+    it('auto-detonate targets highest wound enemy', () => {
+      const state = makeTestState({
+        hand: [{ instanceId: 'd1', defId: 'detonate' }],
+        enemies: [
+          { id: 'e1', name: 'A', maxHp: 20, currentHp: 20, block: 0, wound: 1, intent: { type: 'attack', value: 3 } },
+          { id: 'e2', name: 'B', maxHp: 20, currentHp: 20, block: 0, wound: 8, intent: { type: 'attack', value: 3 } },
+        ],
+      });
+      engine = new BattleEngine(state);
+      engine.endTurn();
+      const s = engine.getState();
+      expect(s.enemies[0].wound).toBe(1); // not touched
+      expect(s.enemies[1].wound).toBe(0); // detonated
+      expect(s.enemies[1].currentHp).toBe(12); // 20 - 8*1
+    });
+  });
 });

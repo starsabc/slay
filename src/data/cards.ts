@@ -82,6 +82,23 @@ const cards: Record<string, CardDef> = {
     orderTag: null,
     description: '手动：抽 2 张牌\n自动：获得 手牌数 点格挡',
   },
+
+  // === 内伤卡牌 ===
+
+  wound_seal: {
+    id: 'wound_seal', name: '内伤印', type: 'mental', rarity: 'advanced', cost: 1,
+    manualEffect: { wound: 3 },
+    autoEffect: { wound: 1 },
+    autoTarget: 'random', orderTag: null,
+    description: '手动：内伤+3  |  自动：内伤+手牌数',
+  },
+  detonate: {
+    id: 'detonate', name: '引爆符', type: 'mental', rarity: 'advanced', cost: 1,
+    manualEffect: { detonate: 2 },
+    autoEffect: { detonate: 1 },
+    autoTarget: 'random', orderTag: 'delay',
+    description: '手动：引爆×2伤害  |  自动：引爆×1伤害',
+  },
 };
 
 export default cards;

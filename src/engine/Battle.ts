@@ -207,6 +207,32 @@ export class BattleEngine {
         this.emit(events, { type: 'draw', count: actual });
       }
     }
+
+    // 内伤
+    if (effect.wound && effect.wound > 0) {
+      if (targetId) {
+        this.applyWound(events, effect.wound, targetId);
+      } else {
+        const alive = this.state.enemies.filter(e => e.currentHp > 0);
+        if (alive.length > 0) {
+          const target = alive[Math.floor(Math.random() * alive.length)];
+          this.applyWound(events, effect.wound, target.id);
+        }
+      }
+    }
+
+    // 引爆
+    if (effect.detonate && effect.detonate > 0) {
+      if (targetId) {
+        this.detonateWound(events, effect.detonate, targetId);
+      } else {
+        const alive = this.state.enemies.filter(e => e.currentHp > 0 && e.wound > 0);
+        if (alive.length > 0) {
+          const target = alive.reduce((a, b) => a.wound >= b.wound ? a : b);
+          this.detonateWound(events, effect.detonate, target.id);
+        }
+      }
+    }
   }
 
   private dealDamageToEnemy(events: BattleEvent[], amount: number, enemyId: string) {
@@ -252,6 +278,22 @@ export class BattleEngine {
       this.state.phase = 'victory';
       this.emit(events, { type: 'phase_change', from: prev, to: 'victory' });
     }
+  }
+
+  private applyWound(events: BattleEvent[], amount: number, enemyId: string) {
+    const enemy = this.state.enemies.find(e => e.id === enemyId);
+    if (!enemy || enemy.currentHp <= 0) return;
+    enemy.wound += amount;
+    this.emit(events, { type: 'wound_applied', targetId: enemyId, amount });
+  }
+
+  private detonateWound(events: BattleEvent[], multiplier: number, enemyId: string) {
+    const enemy = this.state.enemies.find(e => e.id === enemyId);
+    if (!enemy || enemy.wound <= 0) return;
+    const damage = enemy.wound * multiplier;
+    enemy.wound = 0;
+    this.dealDamageToEnemy(events, damage, enemyId);
+    this.emit(events, { type: 'wound_detonated', targetId: enemyId, damage });
   }
 
   private transitionToEnemy(events: BattleEvent[]) {
