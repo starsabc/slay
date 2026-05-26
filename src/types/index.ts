@@ -8,11 +8,20 @@ export type OrderTag = 'priority' | 'delay' | null;
 
 export type TargetType = 'enemy' | 'self' | 'random_enemy' | 'all_enemies';
 
+export type AutoTargetRule =
+  | 'random'
+  | 'lowest_hp'
+  | 'highest_intent'
+  | 'all'
+  | 'sweep_lr';
+
 export interface EffectValues {
   damage?: number;
   block?: number;
   draw?: number;
   energyGain?: number;
+  wound?: number;
+  detonate?: number;
 }
 
 export interface CardDef {
@@ -23,6 +32,7 @@ export interface CardDef {
   cost: number;
   manualEffect: EffectValues;
   autoEffect: EffectValues;
+  autoTarget: AutoTargetRule;
   orderTag: OrderTag;
   description: string;
 }
@@ -40,6 +50,7 @@ export interface EnemyState {
   maxHp: number;
   currentHp: number;
   block: number;
+  wound: number;
   intent: EnemyIntent;
 }
 
@@ -84,4 +95,6 @@ export type BattleEvent =
   | { type: 'card_played'; cardInstanceId: string; isAuto: boolean }
   | { type: 'phase_change'; from: BattlePhase; to: BattlePhase }
   | { type: 'enemy_defeated'; enemyId: string }
-  | { type: 'player_defeated' };
+  | { type: 'player_defeated' }
+  | { type: 'wound_applied'; targetId: string; amount: number }
+  | { type: 'wound_detonated'; targetId: string; damage: number };

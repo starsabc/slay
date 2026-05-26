@@ -32,7 +32,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const initialState: BattleState = {
       player: { maxHp: 50, currentHp: 50, block: 0 },
       enemies: [
-        { id: 'e1', name: '山贼', maxHp: 20, currentHp: 20, block: 0, intent: { type: 'attack', value: 5 } },
+        { id: 'e1', name: '山贼', maxHp: 20, currentHp: 20, block: 0, wound: 0, intent: { type: 'attack', value: 5 } },
       ],
       hand: [],
       drawPile,

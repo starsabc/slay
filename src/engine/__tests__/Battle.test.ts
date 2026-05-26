@@ -6,7 +6,7 @@ function makeTestState(overrides?: Partial<BattleState>): BattleState {
   return {
     player: { maxHp: 50, currentHp: 50, block: 0 },
     enemies: [
-      { id: 'e1', name: '山贼', maxHp: 20, currentHp: 20, block: 0, intent: { type: 'attack', value: 5 } },
+      { id: 'e1', name: '山贼', maxHp: 20, currentHp: 20, block: 0, wound: 0, intent: { type: 'attack', value: 5 } },
     ],
     hand: [
       { instanceId: 'c1', defId: 'strike' },
@@ -119,7 +119,7 @@ describe('BattleEngine', () => {
   describe('victory/defeat', () => {
     it('sets victory when all enemies defeated', () => {
       const state = makeTestState({
-        enemies: [{ id: 'e1', name: '山贼', maxHp: 20, currentHp: 1, block: 0, intent: { type: 'attack', value: 5 } }],
+        enemies: [{ id: 'e1', name: '山贼', maxHp: 20, currentHp: 1, block: 0, wound: 0, intent: { type: 'attack', value: 5 } }],
         hand: [{ instanceId: 'c1', defId: 'strike' }],
       });
       engine = new BattleEngine(state);
