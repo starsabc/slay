@@ -2,7 +2,11 @@ import React from 'react';
 import { useGameStore } from '../store/gameStore';
 import { CardComponent } from './CardComponent';
 
-export const HandArea: React.FC = () => {
+interface Props {
+  onPlayCard?: (instanceId: string) => void;
+}
+
+export const HandArea: React.FC<Props> = ({ onPlayCard }) => {
   const hand = useGameStore(s => s.battleState?.hand ?? []);
   const phase = useGameStore(s => s.battleState?.phase ?? 'draw');
   const playCard = useGameStore(s => s.playCard);
@@ -11,7 +15,11 @@ export const HandArea: React.FC = () => {
 
   const handlePlay = (instanceId: string) => {
     if (canPlay) {
-      playCard(instanceId);
+      if (onPlayCard) {
+        onPlayCard(instanceId);
+      } else {
+        playCard(instanceId);
+      }
     }
   };
 
