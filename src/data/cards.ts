@@ -99,6 +99,29 @@ const cards: Record<string, CardDef> = {
     autoTarget: 'random', orderTag: 'delay',
     description: '手动：引爆×2伤害  |  自动：引爆×1伤害',
   },
+
+  // === 位置操控卡牌 ===
+
+  star_reverse: {
+    id: 'star_reverse', name: '斗转星移', type: 'movement', rarity: 'advanced', cost: 1,
+    manualEffect: { draw: 2 }, autoEffect: {}, autoTarget: 'random', orderTag: null,
+    description: '手动：抽2+弃2  |  自动：反转剩余手牌顺序',
+  },
+  shadow_shift: {
+    id: 'shadow_shift', name: '移形换影', type: 'movement', rarity: 'advanced', cost: 0,
+    manualEffect: {}, autoEffect: {}, autoTarget: 'random', orderTag: null,
+    description: '手动：交换手中2牌位置  |  自动：最右牌移至最左',
+  },
+  returning_wind: {
+    id: 'returning_wind', name: '回风落雁', type: 'movement', rarity: 'advanced', cost: 1,
+    manualEffect: { draw: 1 }, autoEffect: {}, autoTarget: 'random', orderTag: null,
+    description: '手动：弃1→抽弃牌堆顶  |  自动：弃牌堆顶牌插入当前位',
+  },
+  foresight: {
+    id: 'foresight', name: '未卜先知', type: 'movement', rarity: 'master', cost: 1,
+    manualEffect: { draw: 1 }, autoEffect: {}, autoTarget: 'random', orderTag: null,
+    description: '手动：看抽牌堆顶3选1  |  自动：抽牌堆顶1插入当前位',
+  },
 };
 
 export default cards;

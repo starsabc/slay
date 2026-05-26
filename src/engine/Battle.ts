@@ -1,8 +1,8 @@
 import type {
   BattleState, BattleEvent, RuntimeCard, EffectValues,
 } from '../types';
-import { calculatePositionMultipliers } from './PositionCalc';
 import { getCardDef } from '../data/cards';
+import { resolveAutoQueue } from './AutoResolver';
 
 let nextInstanceId = 1;
 export function generateInstanceId(): string {
@@ -97,35 +97,25 @@ export class BattleEngine {
       return events;
     }
 
-    const multipliers = calculatePositionMultipliers(handSize);
-    const resolvedCards = this.resolveAutoOrder([...this.state.hand]);
-    const resolvedIds = new Set(resolvedCards.map(c => c.instanceId));
+    const initialHandIds = new Set(this.state.hand.map(c => c.instanceId));
 
-    resolvedCards.forEach((rc, idx) => {
-      const def = getCardDef(rc.defId);
-      const multiplier = multipliers[idx] ?? 1.0;
-
-      const scaledEffect: EffectValues = {};
-      for (const key of Object.keys(def.autoEffect) as (keyof EffectValues)[]) {
-        const base = def.autoEffect[key];
-        if (base !== undefined && base !== 0) {
-          scaledEffect[key] = Math.floor(base * handSize * multiplier);
-        } else if (base === 0 && key === 'block') {
-          // meditation special case: block 0 means use handSize
-          scaledEffect[key] = Math.floor(handSize * multiplier);
-        } else if (base !== undefined) {
-          scaledEffect[key] = base;
-        }
-      }
-
-      this.applyEffect(events, scaledEffect, undefined);
-      this.emit(events, { type: 'card_played', cardInstanceId: rc.instanceId, isAuto: true });
+    const result = resolveAutoQueue([...this.state.hand], {
+      hand: this.state.hand,
+      discardPile: this.state.discardPile,
+      drawPile: this.state.drawPile,
+      onEffect: (card, effect) => {
+        const evts: BattleEvent[] = [];
+        this.applyEffect(evts, effect, undefined);
+        return evts;
+      },
     });
+
+    events.push(...result.events);
 
     // Only discard the originally resolved cards; keep cards drawn during auto_resolve
     const played: RuntimeCard[] = [];
     this.state.hand = this.state.hand.filter(c => {
-      if (resolvedIds.has(c.instanceId)) {
+      if (initialHandIds.has(c.instanceId)) {
         played.push(c);
         return false;
       }
@@ -160,21 +150,6 @@ export class BattleEngine {
   }
 
   // === Private methods ===
-
-  private resolveAutoOrder(hand: RuntimeCard[]): RuntimeCard[] {
-    const priority: RuntimeCard[] = [];
-    const normal: RuntimeCard[] = [];
-    const delay: RuntimeCard[] = [];
-
-    for (const card of hand) {
-      const def = getCardDef(card.defId);
-      if (def.orderTag === 'priority') priority.push(card);
-      else if (def.orderTag === 'delay') delay.push(card);
-      else normal.push(card);
-    }
-
-    return [...priority, ...normal, ...delay];
-  }
 
   private applyEffect(events: BattleEvent[], effect: EffectValues, targetId?: string) {
     if (effect.damage && effect.damage > 0) {
