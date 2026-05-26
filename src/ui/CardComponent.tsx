@@ -7,9 +7,10 @@ interface Props {
   card: RuntimeCard;
   isManual: boolean;
   onPlay?: (instanceId: string) => void;
+  positionLabel?: string;
 }
 
-export const CardComponent: React.FC<Props> = ({ card, isManual, onPlay }) => {
+export const CardComponent: React.FC<Props> = ({ card, isManual, onPlay, positionLabel }) => {
   const getCardDef = useGameStore(s => s.getCardDef);
   const energy = useGameStore(s => s.battleState?.energy ?? 0);
   const def = getCardDef(card.defId);
@@ -33,6 +34,23 @@ export const CardComponent: React.FC<Props> = ({ card, isManual, onPlay }) => {
   return (
     <div style={{ position: 'relative' }}>
       <CardTooltip card={card} show={showTooltip} />
+      {positionLabel && (
+        <div style={{
+          position: 'absolute',
+          top: 2,
+          left: 4,
+          fontSize: 9,
+          color: '#ffd700',
+          fontWeight: 'bold',
+          background: 'rgba(0,0,0,0.75)',
+          padding: '1px 4px',
+          borderRadius: 3,
+          zIndex: 10,
+          pointerEvents: 'none',
+        }}>
+          {positionLabel}
+        </div>
+      )}
       <div
         onClick={handleClick}
         onMouseEnter={() => setShowTooltip(true)}

@@ -9,6 +9,7 @@ const App: React.FC = () => {
   const [pendingAttackCardId, setPendingAttackCardId] = useState<string | null>(null);
   const playCard = useGameStore(s => s.playCard);
   const getCardDef = useGameStore(s => s.getCardDef);
+  const phase = useGameStore(s => s.battleState?.phase ?? 'draw');
 
   const handleCardPlay = useCallback((instanceId: string) => {
     const cardInHand = useGameStore.getState().battleState?.hand.find(
@@ -53,7 +54,7 @@ const App: React.FC = () => {
         />
         <BattleView />
       </div>
-      <HandArea onPlayCard={handleCardPlay} />
+      <HandArea onPlayCard={handleCardPlay} highlightMode={phase === 'auto_resolve'} />
     </div>
   );
 };

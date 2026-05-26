@@ -121,7 +121,7 @@ function scaleAutoEffect(
   return scaled;
 }
 
-function calcPositionMultiplier(idx: number, total: number): number {
+export function calcPositionMultiplier(idx: number, total: number): number {
   if (total <= 1) return 1.0;
   const maxM = 1.5, minM = 0.9;
   const t = idx / (total - 1);
