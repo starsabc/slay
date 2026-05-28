@@ -1,6 +1,7 @@
 import React from 'react';
 import { useGameStore } from '../store/gameStore';
 import { canMoveTo } from '../game/MapGenerator';
+import { RelicBar } from './RelicBar';
 
 export const MapView: React.FC = () => {
   const runState = useGameStore(s => s.runState);
@@ -33,6 +34,10 @@ export const MapView: React.FC = () => {
         <span>\uD83C\uDF00 \u6C14\u8FD0 {qi}</span>
         <span>\u26A0 \u8B66\u60D5 {alert}</span>
         <span>\uD83D\uDCB0 {gold}</span>
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+        <RelicBar />
       </div>
 
       {/* Grid */}
