@@ -98,3 +98,83 @@ export type BattleEvent =
   | { type: 'player_defeated' }
   | { type: 'wound_applied'; targetId: string; amount: number }
   | { type: 'wound_detonated'; targetId: string; damage: number };
+
+// === Phase 3: Meta 系统类型 ===
+
+export type RelicTrigger =
+  | 'end_turn' | 'auto_left' | 'auto_right' | 'auto_mid'
+  | 'on_attack' | 'on_wound_explode' | 'on_damage' | 'on_discard'
+  | 'battle_start' | 'low_hp';
+
+export interface RelicDef {
+  id: string;
+  name: string;
+  rarity: CardRarity;
+  triggerType: RelicTrigger;
+  condition?: Record<string, number>;
+  effect: Partial<EffectValues> & { multiplier?: number; handSizeBonus?: number; heal?: number };
+  description: string;
+}
+
+export type GridNodeType = 'start' | 'battle' | 'elite' | 'shop' | 'event' | 'rest' | 'boss';
+
+export interface GridNode {
+  row: number;
+  col: number;
+  type: GridNodeType;
+  revealed: boolean;
+  visited: boolean;
+  foggy: boolean;
+}
+
+export interface EventChoice {
+  label: string;
+  description: string;
+  effect: EventEffect;
+}
+
+export interface EventEffect {
+  type: 'add_card' | 'remove_card' | 'add_relic' | 'remove_relic'
+      | 'gold_gain' | 'qi_gain' | 'heal' | 'max_hp_up'
+      | 'damage' | 'alert_up' | 'reveal_boss' | 'reveal_random'
+      | 'upgrade_card' | 'skip_boss';
+  value?: number;
+  rarity?: CardRarity;
+  cardType?: CardType;
+}
+
+export interface EventDef {
+  id: string;
+  name: string;
+  description: string;
+  choices: EventChoice[];
+}
+
+export type GamePhase =
+  | 'map' | 'battle' | 'shop' | 'event'
+  | 'battle_victory' | 'battle_defeat'
+  | 'game_victory' | 'game_defeat';
+
+export interface BattleReward {
+  gold: number;
+  qiRestore: number;
+  cardChoices: string[];
+  relicChoice: string | null;
+}
+
+export interface RunState {
+  currentFloor: number;
+  maxFloor: number;
+  maxHp: number;
+  currentHp: number;
+  gold: number;
+  qi: number;
+  alert: number;
+  deck: string[];
+  relics: RelicDef[];
+  maxRelicSlots: number;
+  grid: GridNode[][];
+  currentPosition: { row: number; col: number };
+  phase: GamePhase;
+  pendingReward: BattleReward | null;
+}
