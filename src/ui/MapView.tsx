@@ -19,19 +19,19 @@ export const MapView: React.FC = () => {
     }
   };
 
-  const nodeIcon: Record<string, string> = {
-    start: '\u25BC', battle: '\u2694', elite: '\uD83D\uDC80', shop: '\uD83D\uDCB0', event: '\u2753', rest: '\u26E9', boss: '\uD83D\uDC79',
+  const nodeLabel: Record<string, string> = {
+    start: '始', battle: '战', elite: '精', shop: '商', event: '?', rest: '息', boss: '王',
   };
 
   return (
     <div style={{ minHeight: '100vh', background: '#111', color: '#ddd', fontFamily: 'sans-serif', padding: 20 }}>
       {/* Resource bar */}
       <div style={{ display: 'flex', gap: 24, justifyContent: 'center', marginBottom: 20, fontSize: 14 }}>
-        <span>\u7B2C {currentFloor} \u5C42</span>
-        <span>\u2764 {currentHp}/{maxHp}</span>
-        <span>\uD83C\uDF00 \u6C14\u8FD0 {qi}</span>
-        <span>\u26A0 \u8B66\u60D5 {alert}</span>
-        <span>\uD83D\uDCB0 {gold}</span>
+        <span>第 {currentFloor} 层</span>
+        <span>HP {currentHp}/{maxHp}</span>
+        <span>气运 {qi}</span>
+        <span>警惕 {alert}</span>
+        <span>灵石 {gold}</span>
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
@@ -64,8 +64,8 @@ export const MapView: React.FC = () => {
                 fontSize: 24, transition: 'all 0.2s',
               }}
             >
-              {node.revealed ? nodeIcon[node.type] || '?' : node.foggy ? '?' : '\u00B7'}
-              {node.visited && !isCurrent && <div style={{ fontSize: 10, color: '#5a5' }}>\u2713</div>}
+              {node.revealed ? nodeLabel[node.type] || '?' : node.foggy ? '?' : '.'}
+              {node.visited && !isCurrent && <div style={{ fontSize: 10, color: '#5a5' }}>OK</div>}
             </div>
           );
         })}
@@ -73,7 +73,7 @@ export const MapView: React.FC = () => {
 
       {/* Help text */}
       <div style={{ textAlign: 'center', marginTop: 16, fontSize: 12, color: '#888' }}>
-        \u70B9\u51FB\u76F8\u90BB\u683C\u5B50\u79FB\u52A8\uFF08\u6D88\u8017\u6C14\u8FD0\uFF09| \u5230\u8FBE \uD83D\uDC79 Boss \u683C\u5373\u53EF\u6311\u6218\u901A\u5173
+        点击相邻格子移动（消耗气运）| 到达 [王] Boss 格即可挑战通关
       </div>
     </div>
   );
