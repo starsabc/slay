@@ -1,62 +1,39 @@
-import React, { useCallback, useState } from 'react';
-import { BattleView } from './ui/BattleView';
-import { HandArea } from './ui/HandArea';
-import { PlayerInfo } from './ui/PlayerInfo';
-import { EnemyArea } from './ui/EnemyArea';
+import React, { useEffect } from 'react';
 import { useGameStore } from './store/gameStore';
+import { BattleScreen } from './ui/BattleScreen';
+
+const screenStyle: React.CSSProperties = {
+  minHeight: '100vh',
+  background: '#111',
+  color: '#ddd',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  fontFamily: 'sans-serif',
+};
 
 const App: React.FC = () => {
-  const [pendingAttackCardId, setPendingAttackCardId] = useState<string | null>(null);
-  const playCard = useGameStore(s => s.playCard);
-  const getCardDef = useGameStore(s => s.getCardDef);
-  const phase = useGameStore(s => s.battleState?.phase ?? 'draw');
+  const phase = useGameStore(s => s.runState?.phase ?? 'map');
+  const initRun = useGameStore(s => s.initRun);
 
-  const handleCardPlay = useCallback((instanceId: string) => {
-    const cardInHand = useGameStore.getState().battleState?.hand.find(
-      c => c.instanceId === instanceId
-    );
-    if (!cardInHand) return;
+  useEffect(() => {
+    initRun(['strike', 'strike', 'strike', 'strike', 'strike', 'defend', 'defend', 'defend', 'defend', 'quick_thought']);
+  }, []);
 
-    const def = getCardDef(cardInHand.defId);
-    if (!def) return;
-
-    // Cards with damage, wound, or detonate need target selection
-    if (def.manualEffect.damage != null || def.manualEffect.wound != null || def.manualEffect.detonate != null) {
-      setPendingAttackCardId(instanceId);
-    } else {
-      // Self-targeting card (defense, draw, energy, etc.)
-      playCard(instanceId);
-    }
-  }, [playCard, getCardDef, setPendingAttackCardId]);
-
-  const handleEnemySelect = useCallback((enemyId: string) => {
-    if (pendingAttackCardId) {
-      playCard(pendingAttackCardId, enemyId);
-      setPendingAttackCardId(null);
-    }
-  }, [pendingAttackCardId, playCard, setPendingAttackCardId]);
-
-  return (
-    <div style={{
-      minHeight: '100vh',
-      background: '#111',
-      color: '#ddd',
-      fontFamily: 'sans-serif',
-      display: 'flex',
-      flexDirection: 'column',
-    }}>
-      <PlayerInfo />
-      <div style={{ flex: 1 }}>
-        <EnemyArea
-          selectable={!!pendingAttackCardId}
-          selectedTargetId={pendingAttackCardId ? null : null}
-          onSelect={handleEnemySelect}
-        />
-        <BattleView />
-      </div>
-      <HandArea onPlayCard={handleCardPlay} highlightMode={phase === 'auto_resolve'} />
-    </div>
-  );
+  switch (phase) {
+    case 'battle':
+    case 'battle_victory':
+    case 'battle_defeat':
+      return <BattleScreen />;
+    case 'shop':
+      return <div style={screenStyle}><h2>武库（商店）</h2><p>Coming in Task 10</p></div>;
+    case 'event':
+      return <div style={screenStyle}><h2>秘境（事件）</h2><p>Coming in Task 9</p></div>;
+    case 'map':
+    default:
+      return <div style={screenStyle}><h2>棋盘地图</h2><p>Coming in Task 8</p></div>;
+  }
 };
 
 export default App;
