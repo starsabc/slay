@@ -1,4 +1,3 @@
-import type { CardDef } from '../types';
 import cards, { getCardDef } from '../data/cards';
 import { getRelicDef, getAllRelicIds } from '../data/relics';
 

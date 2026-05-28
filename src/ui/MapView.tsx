@@ -6,8 +6,6 @@ import { RelicBar } from './RelicBar';
 export const MapView: React.FC = () => {
   const runState = useGameStore(s => s.runState);
   const movePlayer = useGameStore(s => s.movePlayer);
-  const advanceFloor = useGameStore(s => s.advanceFloor);
-
   if (!runState) return null;
 
   const { grid, currentPosition, qi, alert, gold, currentHp, maxHp, currentFloor } = runState;

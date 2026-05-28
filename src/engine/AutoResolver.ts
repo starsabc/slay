@@ -97,7 +97,7 @@ function buildInitialQueue(hand: RuntimeCard[]): RuntimeCard[] {
 
 function scaleAutoEffect(
   effect: EffectValues,
-  def: ReturnType<typeof getCardDef>,
+  _def: ReturnType<typeof getCardDef>,
   originalHandSize: number,
   currentIndex: number,
   queueSize: number,

@@ -8,7 +8,8 @@ export interface TriggerContext {
 }
 
 export class RelicEngine {
-  constructor(private relics: RelicDef[]) {}
+  private relics: RelicDef[];
+  constructor(relics: RelicDef[]) { this.relics = relics; }
 
   checkTriggers(
     trigger: RelicDef['triggerType'],

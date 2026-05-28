@@ -103,7 +103,7 @@ export class BattleEngine {
       hand: this.state.hand,
       discardPile: this.state.discardPile,
       drawPile: this.state.drawPile,
-      onEffect: (card, effect) => {
+      onEffect: (_card, effect) => {
         const evts: BattleEvent[] = [];
         this.applyEffect(evts, effect, undefined);
         return evts;

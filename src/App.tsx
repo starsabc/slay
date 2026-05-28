@@ -5,17 +5,6 @@ import { MapView } from './ui/MapView';
 import { EventView } from './ui/EventView';
 import { ShopView } from './ui/ShopView';
 
-const screenStyle: React.CSSProperties = {
-  minHeight: '100vh',
-  background: '#111',
-  color: '#ddd',
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  fontFamily: 'sans-serif',
-};
-
 const App: React.FC = () => {
   const phase = useGameStore(s => s.runState?.phase ?? 'map');
   const initRun = useGameStore(s => s.initRun);

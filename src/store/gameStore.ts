@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { BattleState, BattleEvent, RuntimeCard, RunState, GamePhase, BattleReward } from '../types';
+import type { BattleState, BattleEvent, RuntimeCard, RunState, BattleReward } from '../types';
 import { BattleEngine, generateInstanceId } from '../engine/Battle';
 import { getInitialDeck, getCardDef } from '../data/cards';
 import { createEnemy, getDefaultBattle } from '../data/enemies';

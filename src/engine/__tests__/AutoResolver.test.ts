@@ -1,13 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { resolveAutoQueue, ResolverContext } from '../AutoResolver';
-import { RuntimeCard, BattleEvent } from '../../types';
+import { resolveAutoQueue } from '../AutoResolver';
+import type { ResolverContext } from '../AutoResolver';
+import type { RuntimeCard } from '../../types';
 
 function makeContext(hand: RuntimeCard[], overrides?: Partial<ResolverContext>): ResolverContext {
   return {
     hand: [...hand],
     discardPile: overrides?.discardPile ?? [],
     drawPile: overrides?.drawPile ?? [],
-    onEffect: (card, effect) => {
+    onEffect: () => {
       return [];
     },
   };

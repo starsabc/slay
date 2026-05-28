@@ -22,6 +22,9 @@ export interface EffectValues {
   energyGain?: number;
   wound?: number;
   detonate?: number;
+  multiplier?: number;
+  handSizeBonus?: number;
+  heal?: number;
 }
 
 export interface CardDef {
