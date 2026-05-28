@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useGameStore } from './store/gameStore';
 import { BattleScreen } from './ui/BattleScreen';
 import { MapView } from './ui/MapView';
+import { EventView } from './ui/EventView';
 
 const screenStyle: React.CSSProperties = {
   minHeight: '100vh',
@@ -30,7 +31,7 @@ const App: React.FC = () => {
     case 'shop':
       return <div style={screenStyle}><h2>武库（商店）</h2><p>Coming in Task 10</p></div>;
     case 'event':
-      return <div style={screenStyle}><h2>秘境（事件）</h2><p>Coming in Task 9</p></div>;
+      return <EventView />;
     case 'map':
     default:
       return <MapView />;
