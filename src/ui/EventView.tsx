@@ -6,6 +6,11 @@ export const EventView: React.FC = () => {
   const runState = useGameStore(s => s.runState);
   const backToMap = useGameStore(s => s.backToMap);
   const acquireRelic = useGameStore(s => s.acquireRelic);
+  const gainGold = useGameStore(s => s.gainGold);
+  const healPlayerMeta = useGameStore(s => s.healPlayerMeta);
+  const increaseMaxHp = useGameStore(s => s.increaseMaxHp);
+  const damagePlayerMeta = useGameStore(s => s.damagePlayerMeta);
+  const gainQi = useGameStore(s => s.gainQi);
 
   const [eventId] = useState(() => getRandomEventIds(1)[0]);
   const [result, setResult] = useState<string | null>(null);
@@ -33,7 +38,7 @@ export const EventView: React.FC = () => {
       }
       case 'gold_gain':
         if (effect.value && effect.value > 0) {
-          runState.gold += effect.value;
+          gainGold(effect.value);
           msg = `获得了 ${effect.value} 灵石`;
         } else {
           msg = '无事发生';
@@ -42,20 +47,20 @@ export const EventView: React.FC = () => {
       case 'heal':
         if (effect.value) {
           const heal = Math.floor(runState.maxHp * effect.value / 100);
-          runState.currentHp = Math.min(runState.maxHp, runState.currentHp + heal);
+          healPlayerMeta(heal);
           msg = `回复了 ${heal} HP`;
         }
         break;
       case 'max_hp_up':
-        runState.maxHp += (effect.value || 0);
+        increaseMaxHp(effect.value || 0);
         msg = `最大 HP +${effect.value}`;
         break;
       case 'damage':
-        runState.currentHp = Math.max(1, runState.currentHp - (effect.value || 0));
+        damagePlayerMeta(effect.value || 0);
         msg = `失去了 ${effect.value} HP`;
         break;
       case 'qi_gain':
-        runState.qi += (effect.value || 0);
+        gainQi(effect.value || 0);
         msg = `气运 +${effect.value}`;
         break;
       case 'reveal_boss':

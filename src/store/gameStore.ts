@@ -59,6 +59,11 @@ interface GameStore {
   acquireRelic: (relicId: string) => boolean;
   loseRelic: (relicId: string) => void;
   advanceFloor: () => void;
+  gainGold: (amount: number) => void;
+  healPlayerMeta: (amount: number) => void;
+  increaseMaxHp: (amount: number) => void;
+  damagePlayerMeta: (amount: number) => void;
+  gainQi: (amount: number) => void;
 }
 
 export const useGameStore = create<GameStore>((set, get) => ({
@@ -217,5 +222,35 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     const newState = nextFloor(state);
     set({ runState: newState });
+  },
+
+  gainGold: (amount: number) => {
+    const state = get().runState;
+    if (!state) return;
+    set({ runState: { ...state, gold: state.gold + amount } });
+  },
+
+  healPlayerMeta: (amount: number) => {
+    const state = get().runState;
+    if (!state) return;
+    set({ runState: { ...state, currentHp: Math.min(state.maxHp, state.currentHp + amount) } });
+  },
+
+  increaseMaxHp: (amount: number) => {
+    const state = get().runState;
+    if (!state) return;
+    set({ runState: { ...state, maxHp: state.maxHp + amount, currentHp: state.currentHp + amount } });
+  },
+
+  damagePlayerMeta: (amount: number) => {
+    const state = get().runState;
+    if (!state) return;
+    set({ runState: { ...state, currentHp: Math.max(1, state.currentHp - amount) } });
+  },
+
+  gainQi: (amount: number) => {
+    const state = get().runState;
+    if (!state) return;
+    set({ runState: { ...state, qi: state.qi + amount } });
   },
 }));

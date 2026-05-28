@@ -6,6 +6,7 @@ import type { ShopItem } from '../game/ShopManager';
 export const ShopView: React.FC = () => {
   const runState = useGameStore(s => s.runState);
   const backToMap = useGameStore(s => s.backToMap);
+  const acquireRelic = useGameStore(s => s.acquireRelic);
   const [message, setMessage] = useState<string | null>(null);
 
   const items = useMemo(() => {
@@ -20,17 +21,25 @@ export const ShopView: React.FC = () => {
       setMessage('灵石不足！');
       return;
     }
-    runState.gold -= item.price;
+
+    const state = useGameStore.getState();
+    const newRunState = { ...state.runState! };
+
+    newRunState.gold -= item.price;
+
     if (item.type === 'card' && item.cardId) {
-      runState.deck.push(item.cardId);
+      newRunState.deck = [...newRunState.deck, item.cardId];
+      useGameStore.setState({ runState: newRunState });
       setMessage(`购买了 ${item.label}`);
     } else if (item.type === 'relic' && item.relicId) {
-      // Store has acquireRelic but we'll directly add to array for shop
-      const ok = useGameStore.getState().acquireRelic(item.relicId);
+      useGameStore.setState({ runState: newRunState });
+      const ok = acquireRelic(item.relicId);
       setMessage(ok ? `装备了心法：${item.label}` : '心法槽位已满');
     } else if (item.type === 'remove') {
-      // TODO: show card selection modal in full implementation
+      useGameStore.setState({ runState: newRunState });
       setMessage('请选择要移除的牌（功能开发中）');
+    } else {
+      useGameStore.setState({ runState: newRunState });
     }
   };
 
@@ -39,7 +48,7 @@ export const ShopView: React.FC = () => {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
         <h2 style={{ color: '#d4a017' }}>武库</h2>
         <div style={{ fontSize: 14 }}>
-          💰 {runState.gold} 灵石 | 🌀 {runState.qi} 气运
+          {runState.gold} 灵石 | {runState.qi} 气运
         </div>
       </div>
 
@@ -59,7 +68,7 @@ export const ShopView: React.FC = () => {
               }}>
               <div style={{ fontWeight: 'bold', marginBottom: 4 }}>{item.label}</div>
               <div style={{ fontSize: 11, color: '#aaa', marginBottom: 8 }}>{item.description}</div>
-              <div style={{ color: '#d4a017', fontWeight: 'bold' }}>{item.price} 💰</div>
+              <div style={{ color: '#d4a017', fontWeight: 'bold' }}>{item.price} 灵石</div>
             </div>
           );
         })}
