@@ -32,7 +32,7 @@ export function createNewRun(initialDeckIds: string[]): RunState {
 export function moveTo(state: RunState, to: { row: number; col: number }): RunState {
   const cost = getMovementCost(state.currentPosition, to);
   const targetNode = state.grid[to.row]?.[to.col];
-  if (!targetNode || !targetNode.revealed || state.qi < cost) {
+  if (!targetNode || (!targetNode.revealed && !targetNode.foggy) || state.qi < cost) {
     return state; // Invalid move, return unchanged
   }
 

@@ -13,7 +13,7 @@ export const MapView: React.FC = () => {
   const handleCellClick = (row: number, col: number) => {
     if (canMoveTo(currentPosition, { row, col })) {
       const node = grid[row][col];
-      if (node.revealed) {
+      if (node.revealed || node.foggy) {
         movePlayer({ row, col });
       }
     }
