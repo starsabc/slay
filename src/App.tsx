@@ -3,6 +3,7 @@ import { useGameStore } from './store/gameStore';
 import { BattleScreen } from './ui/BattleScreen';
 import { MapView } from './ui/MapView';
 import { EventView } from './ui/EventView';
+import { ShopView } from './ui/ShopView';
 
 const screenStyle: React.CSSProperties = {
   minHeight: '100vh',
@@ -29,7 +30,7 @@ const App: React.FC = () => {
     case 'battle_defeat':
       return <BattleScreen />;
     case 'shop':
-      return <div style={screenStyle}><h2>武库（商店）</h2><p>Coming in Task 10</p></div>;
+      return <ShopView />;
     case 'event':
       return <EventView />;
     case 'map':
